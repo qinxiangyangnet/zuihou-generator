@@ -1,10 +1,11 @@
 package ${package.Mapper};
 
-import ${superMapperClassPackage};
 import ${package.Entity}.${entity};
 
-import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+import java.util.Map;
 /**
  * <p>
  * Mapper 接口
@@ -32,7 +33,7 @@ public interface ${table.mapperName} {
 
  //------------------------------ U START ---------------------------//
  /**
- * 根据主键ID 更新对象,如果属性为空，则不会进行对应的属性值更新,如果有属性要更新为null，请参看{@link #updateNull(T)}
+* 根据主键ID 更新对象,如果属性为空，则不会进行对应的属性值更新,如果有属性要更新为null}
  *
  * @param entity 要更新的实体对象
  *
@@ -76,13 +77,19 @@ public interface ${table.mapperName} {
 * @param selector 需要查询的字段, null的话查询该表的所有字段
 * @param condition
 *            进行查询的条件集合
-* @return 返回泛型参数类型的对象，如何取到泛型类型参数，请参看{@link #getEntityClass()}，
+* @return 返回泛型参数类型的对象，如何取到泛型类型参数，
 */
-public ${entity} queryOne(@Param("selector") Map<String, Object> selector, @Param("condition") Map<String, Object> condition, @Param("sorter")List<Sorter> sorter);
- public ${entity} queryOneByWhereSql(@Param("selector") Map<String, Object> selector, @Param("nativeSql") String nativeSql, @Param("sorter")List<Sorter> sorter);
+public ${entity} queryOne(@Param("selector") Map
+<String, Object> selector, @Param("condition") Map
+<String, Object> condition);
+public ${entity} queryOneByWhereSql(@Param("selector") Map
+<String, Object> selector, @Param("nativeSql") String nativeSql);
 
-  public List<${entity}> queryList(@Param("selector") Map<String, Object> selector, @Param("condition") Map<String, Object> condition, @Param("sorter")List<Sorter> sorter);
-    public List<${entity}> queryListByWhereSql(@Param("selector") Map<String, Object> selector, @Param("nativeSql") String nativeSql, @Param("sorter")List<Sorter> sorter);
+public List<${entity}> queryList(@Param("selector") Map
+<String, Object> selector, @Param("condition") Map
+<String, Object> condition);
+public List<${entity}> queryListByWhereSql(@Param("selector") Map
+<String, Object> selector, @Param("nativeSql") String nativeSql);
 
 
       /**
@@ -101,18 +108,13 @@ public ${entity} queryOne(@Param("selector") Map<String, Object> selector, @Para
        */
        List<${entity}> findAll();
 
-        /*
-        * 默认只支持 $MAXLIMIT(默认1000条) 条
-        * @see org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Sort)
-        */
-        List<${entity}> findAll();
-
           /*
           * TODO 1: 对ids大小做限制,保证性能&防止sql超长
           * TODO 2: 从cache获取所有返回的数据
           * @see org.springframework.data.repository.CrudRepository#findAll(java.lang.Iterable)
           */
-          List<${entity}> findAll(Iterable<ID> ids);
+    List<${entity}> findAll(Iterable
+    <Long> ids);
 
             //------------------------------ R END ---------------------------//
 
@@ -122,8 +124,6 @@ public ${entity} queryOne(@Param("selector") Map<String, Object> selector, @Para
             /**
             * 增加排序支持
             * @param condition
-            * @param offset
-            * @param rows
             * @return
             */
             public List<${entity}> queryPage(@Param("selector") Map<String, Object> selector, @Param("condition") Map<String, Object> condition);

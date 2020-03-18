@@ -99,17 +99,6 @@
 
 </#if>
 
-    <#if baseColumnList>
-        <!-- 通用查询结果列 -->
-        <sql id="Base_Insert_Column_List">
-            <#list table.commonFields as field>
-                <#if field.propertyName!="tenantCode">`${field.name}`,</#if>
-            </#list>
-            <#list table.commonFields as field>
-                `${field.name}`<#if field_has_next>,</#if>
-            </#list>
-        </sql>
-    </#if>
 
     <insert id="insert" parameterType="${entity}" useGeneratedKeys="true" keyProperty="id">
 
