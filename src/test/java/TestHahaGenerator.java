@@ -24,11 +24,11 @@ public class TestHahaGenerator {
      */
     public static void main(String[] args) {
 //        CodeGeneratorConfig build = buildHeheEntity();
-        CodeGeneratorConfig build = buildHahaEntity();
+        CodeGeneratorConfig build = buildHeheEntity();
 
         //mysql 账号密码
-        build.setUsername("root");
-        build.setPassword("root");
+//        build.setUsername("root");
+//        build.setPassword("root");
 
         System.out.println("输出路径：");
         System.out.println(System.getProperty("user.dir") + "/zuihou-haha");
@@ -55,7 +55,7 @@ public class TestHahaGenerator {
         ));
         build.setFiledTypes(filedTypes);
 
-        build.setPackageBase("cn.gitee.haha." + build.getChildModuleName());
+        build.setPackageBase("net.xinhuamm.gusteau.live." + build.getChildModuleName());
 
         // 运行
         CodeGenerator.run(build);
@@ -64,13 +64,18 @@ public class TestHahaGenerator {
 
     public static CodeGeneratorConfig buildHeheEntity() {
         List<String> tables = Arrays.asList(
-                "m_product"
+                "live",
+                "report",
+                "live_report",
+                "comment"
         );
         CodeGeneratorConfig build = CodeGeneratorConfig.
-                build("haha", "hehe", "zuihou", "m_", tables);
+                build("live", "domain", "yyp", "", tables);
         build.setSuperEntity(EntityType.ENTITY);
         build.setChildPackageName("");
-        build.setUrl("jdbc:mysql://127.0.0.1:3306/zuihou_base_0000?serverTimezone=CTT&characterEncoding=utf8&useUnicode=true&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull");
+        build.setUrl("jdbc:mysql://rm-bp19rj3x6f3gw6389ao.mysql.rds.aliyuncs.com:3306/gesteau-live?serverTimezone=CTT&characterEncoding=utf8&useUnicode=true&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull");
+        build.setPassword("Xcy_dba_2017");
+        build.setUsername("xcydba");
         return build;
     }
 

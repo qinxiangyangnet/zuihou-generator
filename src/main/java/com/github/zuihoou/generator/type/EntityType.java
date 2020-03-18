@@ -19,7 +19,7 @@ public enum EntityType {
     /**
      * 有创建人创建时间等
      */
-    ENTITY("com.github.zuihou.base.entity.Entity", new String[]{"id", "tenant_code", "create_time", "create_user", "update_time", "update_user"}),
+    ENTITY("com.github.zuihou.base.entity.Entity", new String[]{"id","tenantId", "createTime", "creator", "modifyTime", "modifier"}),
 
     /**
      * 树形实体
