@@ -17,7 +17,7 @@ import java.util.Set;
  * @author zuihou
  * @date 2019/05/25
  */
-public class TestHahaGenerator {
+public class TestUserRoleGenerator {
     /***
      * 注意，想要在这里直接运行，需要手动增加 mysql 驱动
      * @param args
@@ -55,7 +55,7 @@ public class TestHahaGenerator {
         ));
         build.setFiledTypes(filedTypes);
 
-        build.setPackageBase("net.xinhuamm.gusteau.live." + build.getChildModuleName());
+        build.setPackageBase("net.xinhuamm." + build.getChildModuleName());
 
         // 运行
         CodeGenerator.run(build);
@@ -64,19 +64,16 @@ public class TestHahaGenerator {
 
     public static CodeGeneratorConfig buildHeheEntity() {
         List<String> tables = Arrays.asList(
-                "live",
-                "report",
-                "live_report",
-                "comment",
-                "approval_log"
+                "tenant_role_relation",
+                "role"
         );
         CodeGeneratorConfig build = CodeGeneratorConfig.
-                build("live", "domain", "yyp", "", tables);
+                build("usercenter", "domain", "yyp", "", tables);
         build.setSuperEntity(EntityType.ENTITY);
         build.setChildPackageName("");
-        build.setUrl("jdbc:mysql://rm-bp19rj3x6f3gw6389ao.mysql.rds.aliyuncs.com:3306/gusteau-live?serverTimezone=CTT&characterEncoding=utf8&useUnicode=true&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull");
-        build.setPassword("Xcy_dba_2017");
-        build.setUsername("xcydba");
+        build.setUrl("jdbc:mysql://rm-bp177id8c9089392o3o.mysql.rds.aliyuncs.com:3306/gusteau?serverTimezone=CTT&characterEncoding=utf8&useUnicode=true&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull");
+        build.setPassword("db_user_xinhua2016");
+        build.setUsername("config");
         return build;
     }
 

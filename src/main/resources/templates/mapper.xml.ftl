@@ -1,95 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="${package.Mapper}.${table.mapperName}">
+<mapper namespace="${package.Mapper}.I${table.mapperName}">
 
 <#if enableCache>
     <!-- 开启二级缓存 -->
     <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
 
 </#if>
-<#if baseResultMap>
-    <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="${package.Entity}.${entity}">
-<#list table.fields as field>
-<#if field.keyFlag><#--生成主键排在第一位-->
-    <#if field.type?starts_with("int")>
-        <id column="${field.name}" jdbcType="INTEGER" property="${field.propertyName}"/>
-    <#elseif field.type?starts_with("datetime")>
-        <id column="${field.name}" jdbcType="TIMESTAMP" property="${field.propertyName}"/>
-    <#elseif field.type?starts_with("text") || field.type?starts_with("longtext")>
-        <id column="${field.name}" jdbcType="LONGVARCHAR" property="${field.propertyName}"/>
-    <#else>
-        <#if field.type?contains("(")>
-        <#assign fType = field.type?substring(0, field.type?index_of("("))?upper_case/>
-        <id column="${field.name}" jdbcType="${fType}" property="${field.propertyName}"/>
-        <#else>
-        <id column="${field.name}" jdbcType="${field.type?upper_case}" property="${field.propertyName}"/>
-        </#if>
-    </#if>
-</#if>
-</#list>
-<#list table.commonFields as field><#--生成公共字段 -->
-    <#if field.propertyName!="tenantCode">
-    <#if field.keyFlag>
-    <#if field.type?starts_with("int")>
-        <id column="${field.name}" jdbcType="INTEGER" property="${field.propertyName}"/>
-    <#elseif field.type?starts_with("datetime")>
-        <id column="${field.name}" jdbcType="TIMESTAMP" property="${field.propertyName}"/>
-    <#elseif field.type?starts_with("text") || field.type?starts_with("longtext")>
-        <id column="${field.name}" jdbcType="LONGVARCHAR" property="${field.propertyName}"/>
-    <#else>
-        <#if field.type?contains("(")>
-        <#assign fType = field.type?substring(0, field.type?index_of("("))?upper_case/>
-        <id column="${field.name}" jdbcType="${fType}" property="${field.propertyName}"/>
-        <#else>
-        <id column="${field.name}" jdbcType="${field.type?upper_case}" property="${field.propertyName}"/>
-        </#if>
-    </#if>
-    <#else>
-    <#if field.type?starts_with("int")>
-        <result column="${field.name}" jdbcType="INTEGER" property="${field.propertyName}"/>
-    <#elseif field.type?starts_with("datetime")>
-        <result column="${field.name}" jdbcType="TIMESTAMP" property="${field.propertyName}"/>
-    <#elseif field.type?starts_with("text") || field.type?starts_with("longtext") || field.type?starts_with("mediumtext")>
-        <result column="${field.name}" jdbcType="LONGVARCHAR" property="${field.propertyName}"/>
-    <#else>
-        <#if field.type?contains("(")>
-        <#assign fType = field.type?substring(0, field.type?index_of("("))?upper_case/>
-        <result column="${field.name}" jdbcType="${fType}" property="${field.propertyName}"/>
-        <#else>
-        <result column="${field.name}" jdbcType="${field.type?upper_case}" property="${field.propertyName}"/>
-        </#if>
-    </#if>
-    </#if>
-    </#if>
-</#list>
-<#list table.fields as field>
-<#if !field.keyFlag><#--生成普通字段 -->
 
-    <#assign myPropertyName="${field.propertyName}"/>
-    <#-- 自动注入注解 -->
-    <#if field.customMap.annotation?? && field.propertyName?ends_with("Id")>
-        <#assign myPropertyName="${field.propertyName!?substring(0,field.propertyName?index_of('Id'))}"/>
-    </#if>
-    <#if field.type?starts_with("int")>
-        <result column="${field.name}" jdbcType="INTEGER" property="${myPropertyName}"/>
-    <#elseif field.type?starts_with("datetime")>
-        <result column="${field.name}" jdbcType="TIMESTAMP" property="${myPropertyName}"/>
-    <#elseif field.type?starts_with("text") || field.type?starts_with("longtext") || field.type?starts_with("mediumtext")>
-        <result column="${field.name}" jdbcType="LONGVARCHAR" property="${myPropertyName}"/>
-    <#else>
-    <#if field.type?contains("(")>
-        <#assign fType = field.type?substring(0, field.type?index_of("("))?upper_case/>
-        <result column="${field.name}" jdbcType="${fType}" property="${myPropertyName}"/>
-    <#else>
-        <result column="${field.name}" jdbcType="${field.type?upper_case}" property="${myPropertyName}"/>
-    </#if>
-    </#if>
-</#if>
-</#list>
-    </resultMap>
-
-</#if>
 <#if baseColumnList>
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
@@ -104,21 +22,38 @@
 
         INSERT INTO ${table.name} (
         <#list table.commonFields as field>
-            <#if "id"!=field>
-                `${field.name}`<#if field_has_next>,</#if>
+            <#if "id"!=field.name>
+                <if test="${field.name}!=null">
+                    `${field.name}`,
+                </if>
             </#if>
         </#list>
         <#list table.fields as field>
-            `${field.name}`<#if field_has_next>,</#if>
+            <#if "deleted"==field.name>
+                `${field.name}`<#if field_has_next>,</#if>
+            <#else>
+                <if test="${field.name}!=null">
+                    `${field.name}`<#if field_has_next>,</#if>
+                </if>
+            </#if>
         </#list>
         ) VALUES (
         <#list table.commonFields as field>
-            <#if "id"!=field>
-                ${r"${"}${field.name}${r"}"}<#if field_has_next>,</#if>
+            <#if "id"!=field.name>
+                <if test="${field.name}!=null">
+                    ${r"#{"}${field.name}${r"}"},
+                </if>
             </#if>
         </#list>
         <#list table.fields as field>
-                ${r"${"}${field.name}${r"}"}<#if field_has_next>,</#if>
+            <#if "deleted"==field.name>
+                0<#if field_has_next>,</#if>
+            <#else>
+                <if test="${field.name}!=null">
+                    ${r"#{"}${field.name}${r"}"}<#if field_has_next>,</#if>
+                </if>
+            </#if>
+
         </#list>
         )
             <selectKey keyProperty="id" order="AFTER" resultType="Long">
@@ -126,24 +61,86 @@
             </selectKey>
     </insert>
 
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id">
+
+        INSERT INTO ${table.name} (
+        <#list table.commonFields as field>
+            <#if "id"!=field.name>
+                <if test="${field.name}!=null">
+                    `${field.name}`,
+                </if>
+            </#if>
+        </#list>
+        <#list table.fields as field>
+            <#if "deleted"==field.name>
+                `${field.name}`<#if field_has_next>,</#if>
+            <#else>
+                <if test="${field.name}!=null">
+                    `${field.name}`<#if field_has_next>,</#if>
+                </if>
+            </#if>
+        </#list>
+        ) VALUES
+        <foreach collection="list" item="entity" separator=",">
+            (
+            <#list table.commonFields as field>
+                <#if "id"!=field.name>
+                    <if test="${field.name}!=null">
+                        ${r"#{"}${field.name}${r"}"},
+                    </if>
+                </#if>
+            </#list>
+            <#list table.fields as field>
+                <#if "deleted"==field.name>
+                    0<#if field_has_next>,</#if>
+                <#else>
+                    <if test="${field.name}!=null">
+                        ${r"#{"}${field.name}${r"}"}<#if field_has_next>,</#if>
+                    </if>
+                </#if>
+
+            </#list>
+            )
+        </foreach>
+    </insert>
 
     <insert id="insertMap" >
         INSERT INTO ${table.name} (
         <#list table.commonFields as field>
-            <#if "id"!=field >
-                `${field.name}`<#if field_has_next>,</#if>
+            <#if "id"!=field.name >
+                <if test="${field.name}!=null">
+                    `${field.name}`,
+                </if>
+
             </#if>        </#list>
         <#list table.fields as field>
-            `${field.name}`<#if field_has_next>,</#if>
+            <#if "deleted"==field.name>
+                `${field.name}`<#if field_has_next>,</#if>
+            <#else>
+                <if test="${field.name}!=null">
+                    `${field.name}`<#if field_has_next>,</#if>
+                </if>
+            </#if>
+
         </#list>
         ) VALUES (
         <#list table.commonFields as field>
-            <#if "id"!=field>
-                ${r"${map."}${field.name}${r"}"}<#if field_has_next>,</#if>
+            <#if "id"!=field.name>
+                <if test="${field.name}!=null">
+                    ${r"${map."}${field.name}${r"}"},
+                </if>
+
             </#if>
         </#list>
         <#list table.fields as field>
-            ${r"${map."}${field.name}${r"}"}<#if field_has_next>,</#if>
+            <#if "deleted"==field.name>
+                0<#if field_has_next>,</#if>
+            <#else >
+                <if test="${field.name}!=null">
+                    ${r"${map."}${field.name}${r"}"}<#if field_has_next>,</#if>
+                </if>
+            </#if>
+
         </#list>
             <selectKey keyProperty="id" order="AFTER" resultType="Long">
                 SELECT LAST_INSERT_ID()
@@ -161,36 +158,27 @@
         <trim prefix="SET" suffixOverrides=",">
 
             <#list table.commonFields as field>
-                <#if "id"!=field>
+                <#if "id"!=field.name>
                 <if test="${field.name}!=null">
-                    `${field.name}` = ${r"${"}${field.name}${r"}"},
+                    `${field.name}` = ${r"#{"}${field.name}${r"}"},
                 </if>
                 </#if>
             </#list>
             <#list table.fields as field>
                     <if test="${field.name}!=null">
-                        `${field.name}` = ${r"${"}${field.name}${r"}"},
+                        `${field.name}` = ${r"#{"}${field.name}${r"}"},
                     </if>
             </#list>
         </trim>
         WHERE
-        <#list table.commonFields as field>
-        <if test="${field.name}!=null">
-        `${field.name}` = ${r"${"}${field.name}${r"}"} <#if field_has_next> AND </#if>
-        </if>
-        </#list>
-        <#list table.fields as field>
-        <if test="${field.name}!=null">
-        `${field.name}` = ${r"${"}${field.name}${r"}"} <#if field_has_next> AND </#if>
-        </if>
-        </#list>
+        id = ${r"#{id}"} and `deleted`=0
     </update>
 
     <update id="updateMap">
         UPDATE ${table.name}
         <trim prefix="SET" suffixOverrides=",">
             <#list table.commonFields as field>
-                <#if "id"!=field>
+                <#if "id"!=field.name>
                     <if test="map.${field.name}!=null">
                         `${field.name}` = ${r"${map."}${field.name}${r"}"},
                     </if>
@@ -203,7 +191,7 @@
             </#list>
         </trim>
         WHERE
-        id = ${r"${map.id"}
+        id = ${r"${map.id"} and `deleted`=0
     </update>
 
     <update id="updateByCondition">
@@ -218,9 +206,11 @@
 
             </#list>
             <#list table.fields as field>
+
                 <if test="update.${field.name}!=null">
                     `${field.name}` = ${r"${update."}${field.name}${r"}"},
                 </if>
+
             </#list>
         </trim>
 
@@ -231,9 +221,14 @@
                 </if>
             </#list>
             <#list table.fields as field>
-                <if test="condition.${field.name}!=null">
-                    AND `${field.name}` = ${r"#{condition."}${field.name}${r"}"}
-                </if>
+                <#if "deleted"!=field>
+                    <if test="condition.${field.name}!=null">
+                        AND `${field.name}` = ${r"#{condition."}${field.name}${r"}"}
+                    </if>
+                <#else >
+                    and `deleted` = 0
+                </#if>
+
             </#list>
         </trim>
     </update>
@@ -269,12 +264,12 @@
         <trim prefix="SET" suffixOverrides=",">
             <#list table.commonFields as field>
                 <#if "id"!=field>
-                        `${field.name}` = ${r"${"}${field.name}${r"}"},
+                    `${field.name}` = ${r"#{"}${field.name}${r"}"},
                 </#if>
 
             </#list>
             <#list table.fields as field>
-                    `${field.name}` = ${r"${"}${field.name}${r"}"},
+                `${field.name}` = ${r"#{"}${field.name}${r"}"},
             </#list>
         </trim>
         WHERE
@@ -317,18 +312,28 @@
         </trim>
         LIMIT 0,1
     </select>
-
-    <!-- 查询 -->
-    <select id="queryOneByWhereSql" resultType="${entity}">
+    <select id="findById" parameterType="Long" resultType="Role">
         SELECT
-            <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         FROM ${table.name}
-
-        <if test="nativeSql!=null">
-            ${r"${nativeSql}"}
-        </if>
-        LIMIT 0,1
+        <trim prefix="WHERE" prefixOverrides="AND | OR">
+            AND id = ${r"#{id}"} and deleted = 0
+        </trim>
     </select>
+
+    <select id="findByIds" resultType="Role">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM ${table.name}
+        <trim prefix="WHERE" prefixOverrides="AND | OR">
+            id in
+            <foreach item="id" collection="ids" separator="," open="(" close=")" index="">
+                ${r"#{id}"}
+            </foreach>
+            and `deleted` = 0
+        </trim>
+    </select>
+
 
     <!-- 查询 -->
     <select id="queryList" resultType="${entity}">
@@ -338,7 +343,7 @@
         <trim prefix="WHERE" prefixOverrides="AND | OR">
             <#list table.commonFields as field>
                 <if test="condition.${field.name}!=null">
-                    `${field.name}` = ${r"#{condition."}${field.name}${r"}"}
+                    AND `${field.name}` = ${r"#{condition."}${field.name}${r"}"}
                 </if>
             </#list>
             <#list table.fields as field>
@@ -347,49 +352,13 @@
                 </if>
             </#list>
         </trim>
+        order by `createTime` desc
     </select>
 
-    <!-- 查询 -->
-    <select id="queryListByWhereSql" resultType="${entity}">
-        SELECT
-            <include refid="Base_Column_List" />
-        FROM ${table.name}
 
-        <if test="nativeSql!=null">
-            ${r"${nativeSql}"}
-        </if>
-    </select>
-
-    <select id="queryBySql" resultType="Map">
-        ${r"${nativeSql}"}
-    </select>
-
-    <select id="queryBySqlCount" resultType="java.lang.Long">
-        ${r"${executeSqlCount}"}
-    </select>
-
-    <!-- 读取数据 end-->
 
     <!-- 分页数据 start-->
 
-    <select id="queryPage" resultType="${entity}">
-        SELECT
-            <include refid="Base_Column_List" />
-        FROM ${table.name}
-        <trim prefix="WHERE" prefixOverrides="AND | OR">
-            <#list table.commonFields as field>
-                <if test="condition.${field.name}!=null">
-                    `${field.name}` = ${r"#{condition."}${field.name}${r"}"}
-                </if>
-            </#list>
-            <#list table.fields as field>
-                <if test="condition.${field.name}!=null">
-                    AND `${field.name}` = ${r"#{condition."}${field.name}${r"}"}
-                </if>
-            </#list>
-        </trim>
-
-    </select>
 
     <select id="count" resultType="java.lang.Integer">
         SELECT count(1) FROM ${table.name}
@@ -407,27 +376,16 @@
         </trim>
     </select>
 
-    <select id="countByWhereSql" resultType="java.lang.Integer">
-        SELECT count(1) FROM ${table.name}
-        <if test="nativeSql!=null">
-            ${r"${nativeSql}"}
-        </if>
-    </select>
 
-    <!-- 分页数据 end-->
-
-    <!-- 删除 start-->
-    <!-- 按Id删除 -->
-    <delete id="delete" parameterType="Long">
-        DELETE FROM ${table.name}
+    <delete id="deleteById" parameterType="Long">
+        UPDATE ${table.name} set deleted = 1
         <trim prefix="WHERE" prefixOverrides="AND | OR">
-            id =${r"#{id} "}
+            id =${r"#{id}"}
         </trim>
     </delete>
 
-
     <delete id="deleteByCondition" parameterType="java.util.Map">
-        DELETE FROM ${table.name}
+        UPDATE ${table.name} set deleted = 1
         <trim prefix="WHERE" prefixOverrides="AND | OR">
             <#list table.commonFields as field>
                 <if test="condition.${field.name}!=null">
@@ -442,17 +400,15 @@
         </trim>
     </delete>
 
-    <delete id="deleteByWhereSql" parameterType="java.lang.String">
-        DELETE FROM ${table.name}
-        <if test="nativeSql!=null">
-            ${r"${nativeSql}"}
-        </if>
-        <if test="nativeSql==null">
-            WHERE 1=2
-        </if>
+
+    <delete id="deleteByIds" parameterType="Long">
+        UPDATE ${table.name} set deleted = 1
+        <trim prefix="WHERE" prefixOverrides="AND | OR">
+            id in
+            <foreach item="id" collection="ids" separator="," open="(" close=")" index="">
+                ${r"#{id}"}
+            </foreach>
+        </trim>
     </delete>
 
-    <delete id="deleteAll" >
-        DELETE FROM ${table.name}
-    </delete>
 </mapper>

@@ -149,7 +149,7 @@ public class CodeGenerator {
         PackageConfig pc = new PackageConfig();
 //        pc.setModuleName(config.getChildPackageName());
         pc.setParent(config.getPackageBase());
-        pc.setMapper("dao");
+        pc.setMapper("mapper");
         if (StringUtils.isNotEmpty(config.getChildPackageName())) {
             pc.setMapper(pc.getMapper() + StringPool.DOT + config.getChildPackageName());
             pc.setEntity(pc.getEntity() + StringPool.DOT + config.getChildPackageName());
