@@ -65,7 +65,8 @@ public class TestUserRoleGenerator {
     public static CodeGeneratorConfig buildHeheEntity() {
         List<String> tables = Arrays.asList(
                 "tenant_role_relation",
-                "role"
+                "role",
+                "role_permission_relation"
         );
         CodeGeneratorConfig build = CodeGeneratorConfig.
                 build("usercenter", "domain", "yyp", "", tables);
