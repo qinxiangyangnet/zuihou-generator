@@ -66,7 +66,8 @@ public class TestUserRoleGenerator {
         List<String> tables = Arrays.asList(
                 "tenant_role_relation",
                 "role",
-                "role_permission_relation"
+                "role_permission_relation",
+                "tenant"
         );
         CodeGeneratorConfig build = CodeGeneratorConfig.
                 build("usercenter", "domain", "yyp", "", tables);

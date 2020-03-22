@@ -117,9 +117,6 @@ public class ${entity} implements Serializable {
         <#assign fieldComment="${field.comment!?substring(0,field.comment?index_of('\n'))?replace('\r\n','')?replace('\r','')?replace('\n','')?trim}"/>
     </#if>
     </#if>
-    <#if swagger2>
-    @ApiModelProperty(value = "${fieldComment}")
-    </#if>
     <#assign myPropertyType="${field.propertyType}"/>
     <#assign isEnumType="1"/>
     <#list cfg.filedTypes as fieldType>
@@ -128,40 +125,7 @@ public class ${entity} implements Serializable {
             <#assign isEnumType="2"/>
         </#if>
     </#list>
-    <#if field.customMap.Null == "NO" >
-        <#if (field.columnType!"") == "STRING" && isEnumType == "1">
-    @NotEmpty(message = "${fieldComment}不能为空")
-        <#else>
-    @NotNull(message = "${fieldComment}不能为空")
-        </#if>
-    </#if>
-    <#if (field.columnType!"") == "STRING" && isEnumType == "1">
-        <#assign max = 255/>
-        <#if field.type?starts_with("varchar") || field.type?starts_with("char")>
-            <#if field.type?contains("(")>
-                <#assign max = field.type?substring(field.type?index_of("(") + 1, field.type?index_of(")"))/>
-            </#if>
-    @Length(max = ${max}, message = "${fieldComment}长度不能超过${max}")
-        <#elseif field.type?starts_with("text")>
-        <#assign max = 65535/>
-    @Length(max = ${max}, message = "${fieldComment}长度不能超过${max}")
-        <#elseif field.type?starts_with("mediumtext")>
-        <#assign max = 16777215/>
-    @Length(max = ${max}, message = "${fieldComment}长度不能超过${max}")
-        <#elseif field.type?starts_with("longtext")>
 
-        </#if>
-    <#else>
-        <#if field.propertyType?starts_with("Short")>
-    @Range(min = Short.MIN_VALUE, max = Short.MAX_VALUE, message = "${fieldComment}长度不能超过"+Short.MAX_VALUE)
-        </#if>
-        <#if field.propertyType?starts_with("Byte")>
-    @Range(min = Byte.MIN_VALUE, max = Byte.MAX_VALUE, message = "${fieldComment}长度不能超过"+Byte.MAX_VALUE)
-        </#if>
-        <#if field.propertyType?starts_with("Short")>
-    @Range(min = Short.MIN_VALUE, max = Short.MAX_VALUE, message = "${fieldComment}长度不能超过"+Short.MAX_VALUE)
-        </#if>
-    </#if>
     <#if field.keyFlag>
 
     <#-- 普通字段 -->

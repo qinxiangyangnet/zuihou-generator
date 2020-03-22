@@ -66,7 +66,7 @@
         INSERT INTO ${table.name} (
         <#list table.commonFields as field>
             <#if "id"!=field.name>
-                <if test="${field.name}!=null">
+                <if test="list[0].${field.name}!=null">
                     `${field.name}`,
                 </if>
             </#if>
@@ -75,7 +75,7 @@
             <#if "deleted"==field.name>
                 `${field.name}`<#if field_has_next>,</#if>
             <#else>
-                <if test="${field.name}!=null">
+                <if test="list[0].${field.name}!=null">
                     `${field.name}`<#if field_has_next>,</#if>
                 </if>
             </#if>
@@ -85,17 +85,17 @@
             (
             <#list table.commonFields as field>
                 <#if "id"!=field.name>
-                    <if test="${field.name}!=null">
-                        ${r"#{"}${field.name}${r"}"},
+                    <if test="entity.${field.name}!=null">
+                        ${r"#{entity."}${field.name}${r"}"},
                     </if>
                 </#if>
             </#list>
             <#list table.fields as field>
-                <#if "deleted"==field.name>
+                <#if "entity.deleted"==field.name>
                     0<#if field_has_next>,</#if>
                 <#else>
-                    <if test="${field.name}!=null">
-                        ${r"#{"}${field.name}${r"}"}<#if field_has_next>,</#if>
+                    <if test="entity.${field.name}!=null">
+                        ${r"#{entity."}${field.name}${r"}"}<#if field_has_next>,</#if>
                     </if>
                 </#if>
 
