@@ -55,7 +55,7 @@ public class TestHahaGenerator {
         ));
         build.setFiledTypes(filedTypes);
 
-        build.setPackageBase("net.xinhuamm.gusteau.live." + build.getChildModuleName());
+        build.setPackageBase("net.live." + build.getChildModuleName());
 
         // 运行
         CodeGenerator.run(build);
@@ -64,19 +64,16 @@ public class TestHahaGenerator {
 
     public static CodeGeneratorConfig buildHeheEntity() {
         List<String> tables = Arrays.asList(
-                "live",
-                "report",
-                "live_report",
-                "comment",
-                "approval_log"
+                "permission",
+                "news"
         );
         CodeGeneratorConfig build = CodeGeneratorConfig.
-                build("live", "domain", "yyp", "", tables);
+                build("live", "domain", "xxy", "", tables);
         build.setSuperEntity(EntityType.ENTITY);
         build.setChildPackageName("");
-        build.setUrl("jdbc:mysql://rm-bp19rj3x6f3gw6389ao.mysql.rds.aliyuncs.com:3306/gusteau-live?serverTimezone=CTT&characterEncoding=utf8&useUnicode=true&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull");
-        build.setPassword("Xcy_dba_2017");
-        build.setUsername("xcydba");
+        build.setUrl("jdbc:mysql://xxxxx:3306/xinhuaDemo?serverTimezone=CTT&characterEncoding=utf8&useUnicode=true&useSSL=false");
+        build.setPassword("root1234");
+        build.setUsername("root");
         return build;
     }
 
